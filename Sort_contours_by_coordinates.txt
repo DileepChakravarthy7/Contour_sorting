@@ -1,0 +1,45 @@
+
+# sorting contours by sapital position(coordinates)
+
+import numpy as np
+import cv2
+from google.colab.patches import cv2_imshow
+
+
+image = cv2.imread('/content/drive/MyDrive/single_character/ROI_5.jpeg')
+
+duplicate_image = image 
+
+def ret_x_cord_contour(contours):
+  if cv2.contourArea(contours) > 10:
+    cent_moment = cv2.moments(contours)
+    return(int(cent_moment['m10']/cent_moment['m00']))
+  else:
+    pass
+
+
+def identify_centroid(image,centroid):
+  cent_moment = cv2.moments(centroid)
+  centroid_x = int(cent_moment['m10']/cent_moment['m00'])
+  centroid_y = int(cent_moment['m01']/cent_moment['m00'])
+  cv2.circle(image,(centroid_x,centroid_y),10,(255,0,0),-1)
+  return image
+
+contours_from_left_to_right = sorted(contours,key=ret_x_cord_contour,reverse=False)
+
+for (i,c) in enumerate(contours):
+  orig=identify_centroid(image,c)
+
+cv2_imshow(image)
+cv2.waitKey(0)
+
+for (i,c) in enumerate(contours_from_left_to_right):
+  cv2.drawContours(duplicate_image,[c],-1,(0,255,0),3)
+  cent_moment = cv2.moments(c)
+  centroid_x = int(cent_moment['m10']/cent_moment['m00'])
+  centroid_y = int(cent_moment['m01']/cent_moment['m00'])
+  cv2.putText(duplicate_image,str(i+1),(centroid_x,centroid_y),cv2.FONT_HERSHEY_SIMPLEX,1,(188,255,0),2)
+  cv2_imshow(duplicate_image)
+  cv2.waitKey(0)
+  (x,y,w,h)=cv2.boundingRect(c)
+
