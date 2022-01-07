@@ -1,0 +1,27 @@
+# sorting contours by area
+
+import numpy as np
+import cv2
+from google.colab.patches import cv2_imshow
+
+image=cv2.imread('/content/drive/MyDrive/single_character/ROI_5.jpeg')
+duplicate_image = image
+
+def find_contours_areas(contours):
+  areas = []
+  for cnt in contours:
+    cont_area = cv2.contourArea(cnt)
+    areas.append(cont_area)
+  return areas
+
+print('contour areas before sorting',find_contours_areas(contours))
+sorted_contours_by_area = sorted(contours,key=cv2.contourArea,reverse=True)
+
+print('contour areas after sorting',find_contours_areas(sorted_contours_by_area))
+
+for sc in sorted_contours_by_area:
+  cv2.drawContours(duplicate_image,[sc],-1,(0,255,0),3)
+  cv2.waitKey(0)
+  cv2_imshow(duplicate_image)
+
+cv2.waitKey(0)
